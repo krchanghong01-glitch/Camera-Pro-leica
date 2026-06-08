@@ -344,6 +344,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
             
             // Build photo capture metadata details
             val activeScene = SCENE_PRESETS[state.liveSceneIndex]
+            val actualSceneName = if (state.useRealCameraIfPossible && state.hasCameraPermission) "Live Viewfinder Capture" else activeScene.name
             
             val activeAiList = mutableListOf<String>()
             if (state.isAiSceneDetectionEnabled) activeAiList.add("AI Scene: ${activeScene.initialAiScene}")
@@ -352,7 +353,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
             if (state.isAiReflectionRemovalEnabled) activeAiList.add("AI Glass Erase")
             
             val photo = CapturedPhoto(
-                sceneName = activeScene.name,
+                sceneName = actualSceneName,
                 cameraMode = state.currentMode.name,
                 leicaLook = state.currentLook.displayName,
                 iso = state.iso,
@@ -412,11 +413,12 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             // Save recording as record in our database
             val activeScene = SCENE_PRESETS[_uiState.value.liveSceneIndex]
+            val actualSceneName = if (state.useRealCameraIfPossible && state.hasCameraPermission) "Live Viewfinder Capture" else activeScene.name
             val activeAiList = mutableListOf<String>()
             if (state.isAiSceneDetectionEnabled) activeAiList.add("AI Scene Det.")
             
             val videoRecord = CapturedPhoto(
-                sceneName = activeScene.name,
+                sceneName = actualSceneName,
                 cameraMode = CameraMode.VIDEO.name,
                 leicaLook = state.currentLook.displayName,
                 iso = state.iso,

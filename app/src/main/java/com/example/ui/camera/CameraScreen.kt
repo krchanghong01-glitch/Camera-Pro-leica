@@ -6,6 +6,12 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -479,11 +485,18 @@ fun ViewfinderPreview(
                 )
             }
     ) {
-        // High fidelity procedural landscape scene simulator
-        ProceduralSceneryRenderer(
-            state = state,
-            scene = activeScene
-        )
+        if (state.useRealCameraIfPossible && state.hasCameraPermission) {
+            CameraXPreview(
+                modifier = Modifier.fillMaxSize(),
+                state = state
+            )
+        } else {
+            // High fidelity procedural landscape scene simulator
+            ProceduralSceneryRenderer(
+                state = state,
+                scene = activeScene
+            )
+        }
 
         // Rule grid guide lines overlay
         if (state.showGrid) {
@@ -512,6 +525,93 @@ fun ViewfinderPreview(
                 fontSize = 8.sp,
                 letterSpacing = 1.0.sp
             )
+        }
+    }
+}
+
+@Composable
+fun CameraXPreview(
+    modifier: Modifier = Modifier,
+    state: CameraUiState
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
+    
+    Box(modifier = modifier) {
+        AndroidView(
+            factory = { ctx ->
+                PreviewView(ctx).apply {
+                    scaleType = PreviewView.ScaleType.FILL_CENTER
+                }
+            },
+            modifier = Modifier.fillMaxSize(),
+            update = { previewView ->
+                cameraProviderFuture.addListener({
+                    val cameraProvider = cameraProviderFuture.get()
+                    val preview = Preview.Builder().build().also {
+                        it.setSurfaceProvider(previewView.surfaceProvider)
+                    }
+                    
+                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                    
+                    try {
+                        cameraProvider.unbindAll()
+                        cameraProvider.bindToLifecycle(
+                            lifecycleOwner,
+                            cameraSelector,
+                            preview
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }, ContextCompat.getMainExecutor(context))
+            }
+        )
+
+        // Real-Time High-Fidelity Leica Look Overlay using Compose Canvas Blending!
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            when (state.currentLook) {
+                LeicaLook.BW_CLASSIC -> {
+                    // Classic silver halide monochrome look via Saturation blend
+                    drawRect(color = Color.Gray, blendMode = BlendMode.Saturation)
+                }
+                LeicaLook.BW_HIGH_CONTRAST -> {
+                    // Rich deep dramatic monochrome
+                    drawRect(color = Color.DarkGray, blendMode = BlendMode.Color)
+                    drawRect(color = Color.Black.copy(alpha = 0.15f))
+                }
+                LeicaLook.SEPIA -> {
+                    // Golden nostalgic sepia filter
+                    drawRect(color = Color.Gray, blendMode = BlendMode.Saturation)
+                    drawRect(color = Color(0xFFC0A080).copy(alpha = 0.18f), blendMode = BlendMode.Multiply)
+                }
+                LeicaLook.AUTHENTIC -> {
+                    // Vintage color rendering with soft vignetting edges
+                    drawRect(color = Color(0xFFE5D5C5).copy(alpha = 0.04f), blendMode = BlendMode.Multiply)
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.42f)),
+                            center = center,
+                            radius = size.maxDimension * 0.7f
+                        )
+                    )
+                }
+                LeicaLook.VIBRANT -> {
+                    // Rich punchy colors and dynamic highlight depth
+                    drawRect(color = Color(0xFFFFCC33).copy(alpha = 0.04f), blendMode = BlendMode.Overlay)
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.28f)),
+                            center = center,
+                            radius = size.maxDimension * 0.85f
+                        )
+                    )
+                }
+                LeicaLook.NATURAL -> {
+                    // Pristine standard rendering
+                }
+            }
         }
     }
 }
