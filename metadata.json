@@ -1,0 +1,8 @@
+{
+  "name": "Aitox Camera Leica Edition",
+  "description": "Luxurious, photographer-focused flagship camera application mirroring the tactile feel, timeless aesthetics, and Swiss precision of Germany's iconic Leica M11 and Q3 cameras.",
+  "requestFramePermissions": [
+    "android.permission.CAMERA"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

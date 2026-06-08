@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Aitox Leica</string>
+    <string name="accessibility_shutter">Shutter Release Button</string>
+    <string name="accessibility_gallery">Leica Quick Photoroll Gallery</string>
+    <string name="accessibility_looks">Leica Looks Presets Drawer</string>
+    <string name="accessibility_settings">Leica Settings Console</string>
+    <string name="accessibility_ai_power">Xiaomi computational photography engine</string>
+</resources>

@@ -1,0 +1,29 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Outer metal lens barrel circle contour -->
+    <path
+        android:strokeWidth="1.5"
+        android:strokeColor="#B5B5B5"
+        android:fillColor="#00000000"
+        android:pathData="M54,54m-30,0a30,30 0,1 1,60 0a30,30 0,1 1,-60 0" />
+        
+    <!-- Shutter mechanical alignment ticks -->
+    <path
+        android:strokeWidth="1"
+        android:strokeColor="#FFFFFF"
+        android:pathData="M54,18 L54,22 M54,86 L54,90 M18,54 L22,54 M86,54 L90,54" />
+
+    <!-- Pure legendary polished Leica Red Dot center release badge -->
+    <path
+        android:fillColor="#E30613"
+        android:pathData="M54,54m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0" />
+        
+    <!-- Luxurious central geometric "L" logo graphic inside the Red Dot -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50.5,47.5 L50.5,59.5 L57.5,59.5 L57.5,56.5 L53.5,56.5 L53.5,47.5 Z" />
+</vector>
